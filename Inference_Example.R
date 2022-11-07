@@ -1,3 +1,5 @@
+#This is a real dataframe that I had to analyze and generate lollipop plots for.
+#Names of certain variables have been converted to Group_W, Group_M, for privacy reasons
 pacman::p_load(dplyr, ggplot2, tidyr,jtools)
 data = readxl::read_xlsx("~/data.xlsx")
 data = data.frame(ID = 1:nrow(data), data)
