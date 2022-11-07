@@ -196,7 +196,7 @@ for(x in colors){
 
 
 
-ggsave(filename = "Education.png",ggplot(Education, aes(Percentage, Variable, label = paste0(Percentage, "%"))) + 
+ggsave(filename = "Education_Lollipop_Plot.png",ggplot(Education, aes(Percentage, Variable, label = paste0(Percentage, "%"))) + 
          geom_segment(aes(x = 0, y = Variable, xend = Percentage, yend = Variable), show.legend = FALSE, color = new_colors) + theme_bw() + facet_wrap(~Group, ncol = 4) + 
          theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 10), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(), axis.text.x = element_text(size=8), axis.text.y = element_text(size=8),
                strip.background=element_rect(colour="black",
