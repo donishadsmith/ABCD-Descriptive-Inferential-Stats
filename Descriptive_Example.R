@@ -1,3 +1,5 @@
+#Will be adding more detailed comments
+#This script creates the Education.png file located in this repo
 pacman::p_load(dplyr, ggplot2, tidyr)
 data = readxl::read_xlsx("~/data.xlsx")
 data = data[2:nrow(data),]
