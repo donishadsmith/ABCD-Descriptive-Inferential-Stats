@@ -195,12 +195,12 @@ for(x in colors){
 
 
 
+
 ggsave(filename = "Education.png",ggplot(Education, aes(Percentage, Variable, label = paste0(Percentage, "%"))) + 
          geom_segment(aes(x = 0, y = Variable, xend = Percentage, yend = Variable), show.legend = FALSE, color = new_colors) + theme_bw() + facet_wrap(~Group, ncol = 4) + 
-         theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 20), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(), axis.text.x = element_text(size=15), axis.text.y = element_text(size=15),
+         theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 10), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(), axis.text.x = element_text(size=8), axis.text.y = element_text(size=8),
                strip.background=element_rect(colour="black",
-                                             fill="grey95"))+ geom_point(size = 12, show.legend = FALSE, color = new_colors) +
-         expand_limits(x=c(0,100)) + geom_text(color = "white", size = 4), width = 15, height = 8, dpi = 300, units = "in", device='png')
-
+                                             fill="grey95"))+ geom_point(size = 5, show.legend = FALSE, color = new_colors) +
+         expand_limits(x=c(0,100)) + geom_text(color = "white", size = 2), width = 7, height = 3, dpi = 300, units = "in", device='png')
 
 
