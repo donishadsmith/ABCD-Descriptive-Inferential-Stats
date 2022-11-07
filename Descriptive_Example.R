@@ -1,4 +1,6 @@
 #Will be adding more detailed comments
+#This is a real dataframe that I had to analyze and generate lollipop plots for.
+#Names of certain variables have been converted to Group_W, Group_M, for privacy reasons
 #This script creates the Education.png file located in this repo
 pacman::p_load(dplyr, ggplot2, tidyr)
 data = readxl::read_xlsx("~/data.xlsx")
