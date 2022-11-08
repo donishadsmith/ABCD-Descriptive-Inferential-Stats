@@ -170,17 +170,17 @@ data$Race = factor(data$Race, levels = c(
   "Asian or Pacific Islander"
 ))
 
+#Logistic regression for analyzing managerial role and race.
 summary(data$Race)
 model_2 = glm(Manager_Groups~Race, data = data,family = "binomial")
 summary(model_2)      
 
-#Average work hours
+#Linear regression to analyze average work hours in each hob.
 model_3 = lm(Time~Roles2, data = data)
 summary(model_3)
 
-#Turnover Group
+#Logistic regression for analyzing turnover in specific jobs.
 model_4 = glm(Turnover~Roles2, data = data, family = "binomial")
 summary(model_4)
 
-data$Roles2
         
