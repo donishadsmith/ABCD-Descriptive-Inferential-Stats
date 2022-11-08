@@ -4,7 +4,7 @@ pacman::p_load(dplyr, ggplot2, tidyr,jtools)
 data = readxl::read_xlsx("~/data.xlsx")
 data = data.frame(ID = 1:nrow(data), data)
 
-
+#For loop to look through each element in the vector and transform all those elements into binary information for logistic regression.
 Turnover= c()
 for(time in data$Turnover){
   if(as.numeric(time) %in% c(2015:2017)){
@@ -20,6 +20,8 @@ for(time in data$Turnover){
 }
 
 data$Turnover= Turnover
+
+#Another for loop to look through each element in the vector and reduce that information into three factors.
 
 Race= c()
 for(i in data$Race){
@@ -40,6 +42,7 @@ for(i in data$Race){
 
 data$Race =Race
 
+#Another for loop to look through each element in the vector and reduce that information into two factors.
 Race= c()
 for(i in data$Race){
   if(isTRUE(i=="White")==T){
@@ -57,7 +60,10 @@ for(i in data$Race){
 data$Race =Race
 
 
+#Here I am creating a new data column named finance and replicating "NA" to make this column the same length as the other columns in the dataframe
 data$Finance_Groups = rep(NA, nrow(data))
+# Renaming specific variables in certain columns. The "which()" function searches for ceartain rows that meet a certain condition.
+#When those rows are found, then a new variable name is added to the new column for that specific row
 data[c(which(data$Roles == "Group_P" & data$Finance == "C.")),"Finance_Groups"] = "C. Group_P"
 data[c(which(data$Roles == "Group_P" & data$Finance == "V.")),"Finance_Groups"] = "V. Group_P"
 
@@ -114,8 +120,6 @@ data$Roles2 = factor(data$Roles2, levels = c("Group_P",  "Group_R", "Group_R2", 
 chisq.test(Race_Finance)
 
 #Post hoc
-
-bonferroni = 0.05/28
 
 chisq.test(Race_Finance,simulate.p.value = T)
 
