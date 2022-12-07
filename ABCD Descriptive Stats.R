@@ -672,7 +672,7 @@ ggsave(filename = "Q11_Enlarged.png",ggplot(all_survey_participants_long , aes(C
 #############################
 
 #Grouped data
-data[is.na(data)] = 0
+data[is.na(data)] = "Filler"
 Q2 = separate_rows(data, "Q2_Grouped", sep = ",")
 
 PI_CoI = which(Q2$Q2_Grouped =="PIs/CoIs")
