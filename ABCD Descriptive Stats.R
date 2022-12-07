@@ -672,8 +672,8 @@ ggsave(filename = "Q11_Enlarged.png",ggplot(all_survey_participants_long , aes(C
 #############################
 
 #Grouped data
+data[is.na(data)] = 0
 Q2 = separate_rows(data, "Q2_Grouped", sep = ",")
-summary(factor(Q2$Q2_Grouped, exclude = NA))
 
 PI_CoI = which(Q2$Q2_Grouped =="PIs/CoIs")
 
@@ -721,7 +721,6 @@ combined_data = rbind(PI_CoI,recover,trainees,volunteers,works_w_participants,fi
                       manage,ra)
 
 combined_data = data.frame(combined_data[c("ID","Group", "Q8_Simplified", "Q9", "Q10", "Q11_Simplified", "Q5_4_Grouped")])
-summary(factor(combined_data$Group))
 combined_data$Group = factor(combined_data$Group, levels=c("Volunteers",
                                                            "Compensated",
                                                            "Managers",
@@ -732,185 +731,65 @@ combined_data$Group = factor(combined_data$Group, levels=c("Volunteers",
                                                            "PIs/CoIs"))
 
 
-colnames(combined_data) = c("ID", "Group","Education","Gender", "Race/Ethnicity","Group Membership","Working Hours")
+colnames(combined_data) = c("ID", "Group","Education","Gender", "Race_Ethnicity","Group_Membership","Working_Hours")
 
-combined_data$ID = 1:nrow(combined_data)
-
-
-binary_data = data.frame("ID"= combined_data$ID, "Group"= combined_data$`Group`, "High_school_or_equivalent"= rep(NA, nrow(combined_data)), "Some_college" = rep(NA, nrow(combined_data)), "Associates_Degree" = rep(NA, nrow(combined_data)),"Bachelors_Degree" = rep(NA, nrow(combined_data)),
-                         "Masters_Degree" = rep(NA, nrow(combined_data)), "PhD_ProfessionalDegree" = rep(NA, nrow(combined_data)), "Other_Ed" = rep(NA, nrow(combined_data)),
-                         "Man_TransMan"=rep(NA, nrow(combined_data)), "Woman_TransWoman"=rep(NA, nrow(combined_data)), "NonBinary_GenderQueer_GenderNonConforming"=rep(NA, nrow(combined_data)),"Other_Gen" = rep(NA, nrow(combined_data)),
-                         "Asian_or_PacificIslander"=rep(NA, nrow(combined_data)), "Black_or_AfricanAmerican"=rep(NA, nrow(combined_data)),
-                         "Hispanic_or_Latino_a_x"=rep(NA, nrow(combined_data)), "NativeAmerican_orAlaskan_Native"=rep(NA, nrow(combined_data)),
-                         "White"=rep(NA, nrow(combined_data)), "Multiracial_or_Biracial"=rep(NA, nrow(combined_data)), "MiddleEastern_NorthAfrican"=rep(NA, nrow(combined_data)),"Other_Race" = rep(NA, nrow(combined_data)),
-                         "LGBTQIA"=rep(NA, nrow(combined_data)), "Has_a_disability"=rep(NA, nrow(combined_data)), "Neurodiverse"=rep(NA, nrow(combined_data)),"Caregiver"=rep(NA, nrow(combined_data)),
-                         "Born_outside_the_United_States" = rep(NA, nrow(combined_data)),"Firstgenerationcollegestudent_professional"=rep(NA, nrow(combined_data)),"Fromadisadvantagedbackground"=rep(NA, nrow(combined_data)),
-                         "Woman_Group"=rep(NA, nrow(combined_data)), "BIPOC"=rep(NA, nrow(combined_data)), "Hispanic_Group"=rep(NA, nrow(combined_data)), "Other_Group" = rep(NA, nrow(combined_data)),
-                         "zero_to_ten"=rep(NA, nrow(combined_data)), "eleven_to_twenty"=rep(NA, nrow(combined_data)), "twentyone_to_thirty"=rep(NA, nrow(combined_data)), "thirtyone_to_fourty"=rep(NA, nrow(combined_data)))
-
-
-
-binary_data[c(which(combined_data$Education== "High School")), "High_school_or_equivalent"] = "Yes"
-binary_data[c(which(combined_data$Education == "Some College")), "Some_college"] = "Yes"
-binary_data[c(which(combined_data$Education == "Associate’s")), "Associates_Degree"] = "Yes"
-binary_data[c(which(combined_data$Education == "Bachelor’s")), "Bachelors_Degree"] = "Yes"
-binary_data[c(which(combined_data$Education == "Master’s")), "Masters_Degree" ] = "Yes"
-binary_data[c(which(combined_data$Education == "Ph.D./M.D.")), "PhD_ProfessionalDegree"] = "Yes"
-binary_data[c(which(combined_data$Education == "Other")), "Other_Ed"] = "Yes"
-
-binary_data[c(which(combined_data$Gender== "Man/Trans Man")), "Man_TransMan"] = "Yes"
-binary_data[c(which(combined_data$Gender == "Woman/Trans Woman")), "Woman_TransWoman"] = "Yes"
-binary_data[c(which(combined_data$Gender == "Non-Binary/Gender Queer/Gender Non-Conforming")), "NonBinary_GenderQueer_GenderNonConforming"] = "Yes"
-binary_data[c(which(combined_data$Gender == "Other")), "Other_Gen"] = "Yes"
-
-
-race =  separate_rows(combined_data, "Race/Ethnicity", sep = ",")
-summary(factor(race[["Race/Ethnicity"]], exclude = NA))
-
-
-IDs = race[which(race$`Race/Ethnicity`== "White"),"ID"]
-binary_data[c(IDs$ID), "White"] = "Yes"
-
-
-IDs = race[which(race$`Race/Ethnicity`== "Black or African American"),"ID"]
-binary_data[c(IDs$ID), "Black_or_AfricanAmerican"] = "Yes"
-
-IDs = race[which(race$`Race/Ethnicity`== "Multiracial or Biracial"),"ID"]
-binary_data[c(IDs$ID), "Multiracial_or_Biracial"] = "Yes"
-
-IDs = race[which(race$`Race/Ethnicity`== "Asian or Pacific Islander"),"ID"]
-binary_data[c(IDs$ID),  "Asian_or_PacificIslander"] = "Yes"
-
-IDs = race[which(race$`Race/Ethnicity`== "Hispanic or Latino/a/x"),"ID"]
-binary_data[c(IDs$ID), "Hispanic_or_Latino_a_x"] = "Yes"
-
-IDs = race[which(race$`Race/Ethnicity`== "Native American or Alaskan Native"),"ID"]
-binary_data[c(IDs$ID), "NativeAmerican_orAlaskan_Native"] = "Yes"
-
-IDs = race[which(race$`Race/Ethnicity`== "Middle Eastern/North African"),"ID"]
-binary_data[c(IDs$ID), "MiddleEastern_NorthAfrican"] = "Yes"
-
-IDs = race[which(race$`Race/Ethnicity`== "Other race/ethnicity not listed here"),"ID"]
-binary_data[c(IDs$ID), "Other_Race"] = "Yes"
-
-summary(factor(race[["Race/Ethnicity"]], exclude = NA))
-summary(factor(binary_data$White, exclude = NA))
-
-
-binary_data[c(which(combined_data$`Working Hours` == "0-10")), "zero_to_ten"] = "Yes"
-binary_data[c(which(combined_data$`Working Hours` == "11-20")), "eleven_to_twenty"] = "Yes"
-binary_data[c(which(combined_data$`Working Hours` == "21-30")), "twentyone_to_thirty"] = "Yes"
-binary_data[c(which(combined_data$`Working Hours` == "31-40")), "thirtyone_to_fourty"] = "Yes"
-
-
-group =  separate_rows(combined_data, "Group Membership", sep = ",")
-summary(factor(group[["Group Membership"]], exclude = NA))
-
-
-IDs = group[which(group$`Group Membership`== "Born outside the United States"),"ID"]
-binary_data[c(IDs$ID), "Born_outside_the_United_States"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "LGBTQIA+"),"ID"]
-binary_data[c(IDs$ID), "LGBTQIA"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "Have a disability"),"ID"]
-binary_data[c(IDs$ID), "Has_a_disability"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "Neurodiverse"),"ID"]
-binary_data[c(IDs$ID), "Neurodiverse"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "Actively engaged in caring responsibilities"),"ID"]
-binary_data[c(IDs$ID), "Caregiver"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "BIPOC"),"ID"]
-binary_data[c(IDs$ID), "BIPOC"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "Hispanic or Latino/a/x"),"ID"]
-binary_data[c(IDs$ID), "Hispanic_Group"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "Woman"),"ID"]
-binary_data[c(IDs$ID), "Woman_Group"] = "Yes"
-
-IDs = group[which(group$`Group Membership`== "First generation college student/professional"),"ID"]
-binary_data[c(IDs$ID), "Firstgenerationcollegestudent_professional"] = "Yes"
-
-
-IDs = group[which(group$`Group Membership`== "Other"),"ID"]
-binary_data[c(IDs$ID), "Other_Group"] = "Yes"
-
-
-IDs = group[which(group$`Group Membership`== "From a disadvantaged background"),"ID"]
-binary_data[c(IDs$ID), "Fromadisadvantagedbackground"] = "Yes"
-
-
-
-summary(factor(group[["Group Membership"]], exclude = NA))
-summary(factor(binary_data$Woman_Group, exclude = NA))
-
-
-
-
-binary_data[is.na(binary_data)] <- "No"
-
-
-
-Education = binary_data %>% 
+Education = combined_data %>% 
   group_by(Group) %>%
-  summarise("High School" = sum(High_school_or_equivalent=="Yes"),
-            "Some College" = sum(Some_college=="Yes"),
-            "Associate’s" = sum(Associates_Degree=="Yes"),
-            "Bachelor’s" = sum(Bachelors_Degree=="Yes"),
-            "Master’s" = sum(Masters_Degree=="Yes"),
-            "Ph.D./M.D." = sum(PhD_ProfessionalDegree=="Yes"),
-            "Other"= sum(Other_Ed=="Yes"))
-  
-Group_Membership=binary_data %>% 
+  summarise("High School" = sum(Education=="High School"),
+            "Some College" = sum(Education=="Some College"),
+            "Associate’s" = sum(Education=="Associate’s"),
+            "Bachelor’s" = sum(Education=="Bachelor’s"),
+            "Master’s" = sum(Education=="Master’s"),
+            "Ph.D./M.D." = sum(Education=="Ph.D./M.D."),
+            "Other"= sum(Education=="Other"))
+
+Gender= combined_data %>% 
   group_by(Group) %>%
   summarise(
-    "LGBTQIA+" = sum(LGBTQIA=="Yes"),
-    "Have a disability" = sum(Has_a_disability=="Yes"),
-    "Neurodiverse" = sum(Neurodiverse=="Yes"),
-    "Actively engaged in caring responsibilities" = sum(Caregiver=="Yes"),
-    "Born outside the United States" = sum(Born_outside_the_United_States=="Yes"),
-    "First generation college student/professional" = sum(Firstgenerationcollegestudent_professional=="Yes"),
-    "Other"= sum(Other_Group=="Yes"),
-    "Woman"= sum(Woman_Group=="Yes"),
-    "Hispanic or Latino/a/x"= sum(Hispanic_Group=="Yes"),
-    "Black, Indigenous, or a Person of Color (BIPOC)"= sum(BIPOC=="Yes"),
-    "From a disadvantaged background"= sum(Fromadisadvantagedbackground=="Yes"),)
+    "Man/Trans Man" = sum(Gender="Man/Trans Man"),
+    "Woman/Trans Woman" = sum(Gender=="Woman/Trans Woman"),
+    "Non-Binary/Gender Queer/Gender Non-Conforming" = sum(Gender=="Non-Binary/Gender Queer/Gender Non-Conforming"),
+    "Other"= sum(Gender=="Other"))
 
 
-
-Working_Hours=binary_data %>% 
+group =  separate_rows(combined_data, "Group_Membership", sep = ",")  
+Group_Membership=group %>% 
   group_by(Group) %>%
   summarise(
-    "0-10" = sum(zero_to_ten=="Yes"),
-    "11-20" = sum(eleven_to_twenty=="Yes"),
-    "21-30" = sum(twentyone_to_thirty=="Yes"),
-    "31-40" = sum(thirtyone_to_fourty=="Yes"),
+    "LGBTQIA+" = sum(Group_Membership=="LGBTQIA+"),
+    "Have a disability" = sum(Group_Membership=="Have a disability"),
+    "Neurodiverse" = sum(Group_Membership=="Neurodiverse"),
+    "Actively engaged in caring responsibilities" = sum(Group_Membership=="Actively engaged in caring responsibilities"),
+    "Born outside the United States" = sum(Group_Membership=="Born outside the United States"),
+    "First generation college student/professional" = sum(Group_Membership=="First generation college student/professional"),
+    "Other"= sum(Group_Membership=="Other"),
+    "Woman"= sum(Group_Membership=="Woman"),
+    "Hispanic or Latino/a/x"= sum(Group_Membership=="Hispanic or Latino/a/x"),
+    "Black, Indigenous, or a Person of Color (BIPOC)"= sum(Group_Membership="Black, Indigenous, or a Person of Color (BIPOC)"),
+    "From a disadvantaged background"= sum(Group_Membership=="From a disadvantaged background"))
+
+
+
+Working_Hours=combined_data %>% 
+  group_by(Group) %>%
+  summarise(
+    "0-10" = sum(Working_Hours=="0-10" ),
+    "11-20" = sum(Working_Hours=="11-20"),
+    "21-30" = sum(Working_Hours=="21-30") ,
+    "31-40" = sum(Working_Hours=="31-40")
   )
-
-Race_Ethnicity=binary_data %>% 
+race =  separate_rows(combined_data, "Race_Ethnicity", sep = ",")
+Race_Ethnicity=race %>% 
   group_by(Group) %>%
   summarise(
-    "Asian or Pacific Islander" = sum(Asian_or_PacificIslander=="Yes"),
-    "Black or African American" = sum(Black_or_AfricanAmerican=="Yes"),
-    "Hispanic or Latino/a/x" = sum(Hispanic_or_Latino_a_x=="Yes"),
-    "Native American or Alaskan Native" = sum(NativeAmerican_orAlaskan_Native=="Yes"),
-    "White" = sum(White=="Yes"),
-    "Multiracial or Biracial" = sum(Multiracial_or_Biracial=="Yes"),
-    "Middle Eastern/North African" = sum(MiddleEastern_NorthAfrican=="Yes"),
-    "Other race/ethnicity not listed here"=sum(Other_Race=="Yes"))
-
-Gender= binary_data %>% 
-  group_by(Group) %>%
-  summarise(
-    "Man/Trans Man" = sum(Man_TransMan=="Yes"),
-    "Woman/Trans Woman" = sum(Woman_TransWoman=="Yes"),
-    "Non-Binary/Gender Queer/Gender Non-Conforming" = sum(NonBinary_GenderQueer_GenderNonConforming=="Yes"),
-    "Other"= sum(Other_Gen=="Yes"))
-
-
+    "Asian or Pacific Islander" = sum(Race_Ethnicity== "Asian or Pacific Islander"),
+    "Black or African American" = sum(Race_Ethnicity=="Black or African American"),
+    "Hispanic or Latino/a/x" = sum(Race_Ethnicity=="Hispanic or Latino/a/x"),
+    "Native American or Alaskan Native" = sum(Race_Ethnicity=="Native American or Alaskan Native" ),
+    "White" = sum(Race_Ethnicity=="White"),
+    "Multiracial or Biracial" = sum(Race_Ethnicity=="Multiracial or Biracial" ),
+    "Middle Eastern/North African" = sum(Race_Ethnicity=="Middle Eastern/North African"),
+    "Other race/ethnicity not listed here"=sum(Race_Ethnicity=="Other race/ethnicity not listed here"))
 
 
 #Converting counts to percentages for each data frame using a function
@@ -1060,5 +939,8 @@ create_plot("Working_Hours.png", Working_Hours)
 create_plot("Gender.png", Gender)
 create_plot(" Group_Membership.png", Group_Membership)
 create_plot("Race_Ethnicity.png", Race_Ethnicity)
+
+
+
 
 
