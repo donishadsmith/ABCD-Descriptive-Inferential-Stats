@@ -921,7 +921,7 @@ new_colours = c()
 create_plot = function(file_name,dataframe){
   for(x in colors){
     #Color vector needs to match the rows in the Group column
-    new_colours <<- c(new_colours, rep(x, nrow(dataframe[dataframe$Group == "Volunteers",])))
+    new_colours = c(new_colours, rep(x, nrow(dataframe[dataframe$Group == "Volunteers",])))
   }
 
   
