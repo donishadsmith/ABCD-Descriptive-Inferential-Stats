@@ -4,7 +4,7 @@ pacman::p_load(dplyr, ggplot2, tidyr)
 data = readxl::read_xlsx("~/data.xlsx")
 data = data[2:nrow(data),]
 data = data.frame(ID = 1:nrow(data), data)
-
+data[is.na(data)] = "Filler"
 
 Q6_4_Grouped = c()
 for(i in data$Q6_4){
@@ -106,40 +106,17 @@ for(group in groups){
   
 }
 
-binary_data = data.frame("ID"= combined_data$ID, "Group"= combined_data$`Group`, "High_school_or_equivalent"= rep(NA, nrow(combined_data)), "Some_college" = rep(NA, nrow(combined_data)), "Associates_Degree" = rep(NA, nrow(combined_data)),"Bachelors_Degree" = rep(NA, nrow(combined_data)),
-                         "Masters_Degree" = rep(NA, nrow(combined_data)), "PhD_ProfessionalDegree" = rep(NA, nrow(combined_data)), "Other_Ed" = rep(NA, nrow(combined_data)))
-
-
-
-summary(factor(combined_data$Education, exclude = NA))
-
-
-binary_data[c(which(combined_data$Education== "High School")), "High_school_or_equivalent"] = "Yes"
-binary_data[c(which(combined_data$Education == "Some College")), "Some_college"] = "Yes"
-binary_data[c(which(combined_data$Education == "Associate’s")), "Associates_Degree"] = "Yes"
-binary_data[c(which(combined_data$Education == "Bachelor’s")), "Bachelors_Degree"] = "Yes"
-binary_data[c(which(combined_data$Education == "Master’s")), "Masters_Degree" ] = "Yes"
-binary_data[c(which(combined_data$Education == "Ph.D./M.D.")), "PhD_ProfessionalDegree"] = "Yes"
-binary_data[c(which(combined_data$Education == "Other")), "Other_Ed"] = "Yes"
-
-
-
-binary_data[is.na(binary_data)] <- "No"
-
-
-
 
 #Using tidyr to summarize information by group
-Education = binary_data %>% 
+Education = combined_data %>% 
   group_by(Group) %>%
-  summarise("High School" = sum(High_school_or_equivalent=="Yes"),
-            "Some College" = sum(Some_college=="Yes"),
-            "Associate’s" = sum(Associates_Degree=="Yes"),
-            "Bachelor’s" = sum(Bachelors_Degree=="Yes"),
-            "Master’s" = sum(Masters_Degree=="Yes"),
-            "Ph.D./M.D." = sum(PhD_ProfessionalDegree=="Yes"),
-            "Other"= sum(Other_Ed=="Yes"))
-
+  summarise("High School" = sum(Education=="High School"),
+            "Some College" = sum(Education=="Some College"),
+            "Associate’s" = sum(Education=="Associate’s"),
+            "Bachelor’s" = sum(Education=="Bachelor’s"),
+            "Master’s" = sum(Education=="Master’s"),
+            "Ph.D./M.D." = sum(Education=="Ph.D./M.D."),
+            "Other"= sum(Education=="Other"))
 
 
 Education =  Education%>% 
