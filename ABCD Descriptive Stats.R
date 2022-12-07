@@ -746,7 +746,7 @@ Education = combined_data %>%
 Gender= combined_data %>% 
   group_by(Group) %>%
   summarise(
-    "Man/Trans Man" = sum(Gender="Man/Trans Man"),
+    "Man/Trans Man" = sum(Gender=="Man/Trans Man"),
     "Woman/Trans Woman" = sum(Gender=="Woman/Trans Woman"),
     "Non-Binary/Gender Queer/Gender Non-Conforming" = sum(Gender=="Non-Binary/Gender Queer/Gender Non-Conforming"),
     "Other"= sum(Gender=="Other"))
@@ -765,7 +765,7 @@ Group_Membership=group %>%
     "Other"= sum(Group_Membership=="Other"),
     "Woman"= sum(Group_Membership=="Woman"),
     "Hispanic or Latino/a/x"= sum(Group_Membership=="Hispanic or Latino/a/x"),
-    "Black, Indigenous, or a Person of Color (BIPOC)"= sum(Group_Membership="Black, Indigenous, or a Person of Color (BIPOC)"),
+    "Black, Indigenous, or a Person of Color (BIPOC)"= sum(Group_Membership=="Black, Indigenous, or a Person of Color (BIPOC)"),
     "From a disadvantaged background"= sum(Group_Membership=="From a disadvantaged background"))
 
 
