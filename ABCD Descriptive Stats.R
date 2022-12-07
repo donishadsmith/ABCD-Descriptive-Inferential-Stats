@@ -83,6 +83,7 @@ for(i in data$Q6_4){
 }
 data$Q6_4_Grouped_All =Q6_4_Grouped_All
 
+#Creating a grouping variable for all survey participants
 data$All = rep('All ABCD Survey Participants', nrow(data))
 
 all_survey_participants = data[c('ID', "All" ,"Q27", "Q1", "Q2", "Q28", "Q29",
@@ -221,9 +222,7 @@ ggsave(filename = "Q28_Enlarged.png",ggplot(all_survey_participants_long , aes(C
          geom_text(color = "white", size = 4), width = 13, height = 8, dpi = 300, units = "in", device='png')
 
 
-
 #Q29
-
 summary(factor(all_survey_participants$Q29, exclude = NA))
 all_survey_participants[which(all_survey_participants$Q29=="Full Professor (TT)"), "Q29"] = "Full Professor (Tenure Track; TT & Non-Tenure Track; NTT)"
 all_survey_participants[which(all_survey_participants$Q29=="Full Professor (NTT)"), "Q29"] = "Full Professor (Tenure Track; TT & Non-Tenure Track; NTT)"
@@ -264,7 +263,6 @@ ggsave(filename = "Q29_Enlarged.png",ggplot(all_survey_participants_long , aes(C
 
 
 #Q30
-colnames(all_survey_participants)
 summary(factor(all_survey_participants$Q30_Grouped, exclude = NA))
 all_survey_participants_long= all_survey_participants %>% 
   group_by(All) %>%
@@ -289,12 +287,6 @@ ggsave(filename = "Q30_Enlarged.png",ggplot(all_survey_participants_long , aes(C
 
 
 #Q3
-colnames(all_survey_participants)
-
-
-hist(as.numeric(data$Q6_4))
-
-
 summary(factor(all_survey_participants$Q3, exclude = NA))
 all_survey_participants_long= all_survey_participants %>% 
   group_by(All) %>%
@@ -339,11 +331,11 @@ ggsave(filename = "Q3_Enlarged.png",ggplot(all_survey_participants_long , aes(Co
          geom_text(color = "white", size = 4), width = 13, height = 8, dpi = 300, units = "in", device='png')
 
 
-
-
 #Q4
 colnames(all_survey_participants)
 summary(factor(all_survey_participants$Q4_Simplified, exclude = NA))
+ #Participants could select multiple choices for this variable 
+# Each choice is seperated by a comma 
 all_survey_participants_expanded = separate_rows( all_survey_participants, "Q4_Simplified", sep = ",")
 all_survey_participants_expanded[is.na(all_survey_participants_expanded)] = "Filler"
 summary(factor(all_survey_participants_expanded$Q4_Simplified, exclude = NA))
@@ -374,11 +366,6 @@ ggsave(filename = "Q4_Enlarged.png",ggplot(all_survey_participants_long , aes(Co
 
 
 #Q5
-colnames(all_survey_participants)
-
-
-hist(as.numeric(data$Q6_4))
-
 
 summary(factor(all_survey_participants$Q5_4_Grouped_All, exclude = NA))
 all_survey_participants_long= all_survey_participants %>% 
@@ -403,8 +390,6 @@ all_survey_participants_long$Variable = factor(all_survey_participants_long$Vari
   
 ))
 
-
-
 labels = all_survey_participants_long$Count
 labels[which(labels<10 & labels>0)] = "<10"
 
@@ -415,14 +400,7 @@ ggsave(filename = "Q5_Enlarged.png",ggplot(all_survey_participants_long , aes(Co
                                              fill="grey95"))+ geom_point(size = 9, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 4), width = 15, height = 8, dpi = 300, units = "in", device='png')
 
-
-
 #Q6
-colnames(all_survey_participants)
-
-
-hist(as.numeric(data$Q6_4))
-
 
 summary(factor(all_survey_participants$Q6_4_Grouped_All, exclude = NA))
 all_survey_participants_long= all_survey_participants %>% 
@@ -433,7 +411,6 @@ all_survey_participants_long= all_survey_participants %>%
     "11-20" = sum(Q6_4_Grouped_All=="11-20"),
     "0-10" = sum(Q6_4_Grouped_All=="0-10"),
   )
-
 
 all_survey_participants_long =  all_survey_participants_long %>% 
   pivot_longer(cols = -All, names_to = "Variable", values_to = "Count")
@@ -446,8 +423,6 @@ all_survey_participants_long$Variable = factor(all_survey_participants_long$Vari
   
 ))
 
-
-
 labels = all_survey_participants_long$Count
 labels[which(labels<10 & labels>0)] = "<10"
 
@@ -458,7 +433,6 @@ ggsave(filename = "Q6_Enlarged.png",ggplot(all_survey_participants_long , aes(Co
                strip.background=element_rect(colour="black",
                                              fill="grey95"))+ geom_point(size = 11, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 5), width = 18, height = 8, dpi = 300, units = "in", device='png')
-
 
 #Q7
 summary(factor(all_survey_participants$Q7, exclude = NA))
@@ -475,14 +449,12 @@ all_survey_participants_long = data.frame(all_survey_participants_long)
 labels = all_survey_participants_long$Count
 labels[which(labels<10 & labels>0)] = "<10"
 
-
 ggsave(filename = "Q7_Enlarged.png",ggplot(all_survey_participants_long , aes(Count, Variable, label = labels)) +  ggtitle("Are you willing to disclose your demographic information as part of this survey?") +
          geom_segment(aes(x = 0, y = Variable, xend = Count, yend = Variable), show.legend = FALSE, color = all_color) + theme_bw() + 
          theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 20), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(),
                strip.background=element_rect(colour="black",
                                              fill="grey95"))+ geom_point(size = 9, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 4), width = 13, height = 8, dpi = 300, units = "in", device='png')
-
 
 #Q8
 summary(factor(all_survey_participants_expanded$Q8_Simplified, exclude = NA))
@@ -514,7 +486,6 @@ all_survey_participants_long$Variable = factor(all_survey_participants_long$Vari
 labels = all_survey_participants_long$Count
 labels[which(labels<10 & labels>0)] = "<10"
 
-
 ggsave(filename = "Q8_Enlarged.png",ggplot(all_survey_participants_long , aes(Count, Variable, label = labels)) +  ggtitle("What is your current highest level of education?") +
          geom_segment(aes(x = 0, y = Variable, xend = Count, yend = Variable), show.legend = FALSE, color = all_color) + theme_bw() + 
          theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 20), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(),
@@ -522,10 +493,7 @@ ggsave(filename = "Q8_Enlarged.png",ggplot(all_survey_participants_long , aes(Co
                                              fill="grey95"))+ geom_point(size = 9, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 4), width = 13, height = 8, dpi = 300, units = "in", device='png')
 
-
-
 #Q9
-
 summary(factor(all_survey_participants$Q9, exclude = NA))
 all_survey_participants_long= all_survey_participants %>% 
   group_by(All) %>%
@@ -557,14 +525,6 @@ ggsave(filename = "Q9_Enlarged.png",ggplot(all_survey_participants_long , aes(Co
                                              fill="grey95"))+ geom_point(size = 9, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 4), width = 13, height = 8, dpi = 300, units = "in", device='png')
 
-
-
-
-
-
-
-
-
 #Q10
 colnames(all_survey_participants)
 summary(factor(all_survey_participants$Q10, exclude = NA))
@@ -586,7 +546,6 @@ all_survey_participants_long= all_survey_participants_expanded %>%
  
 )
 
-
 all_survey_participants_long =  all_survey_participants_long %>% 
   pivot_longer(cols = -All, names_to = "Variable", values_to = "Count")
 all_survey_participants_long = data.frame(all_survey_participants_long)
@@ -604,15 +563,12 @@ all_survey_participants_long$Variable = factor(all_survey_participants_long$Vari
 labels = all_survey_participants_long$Count
 labels[which(labels<10 & labels>0)] = "<10"
 
-
 ggsave(filename = "Q10_Enlarged.png",ggplot(all_survey_participants_long , aes(Count, Variable, label = labels)) +  ggtitle("How would you describe yourself? Select all that apply to you:") +
          geom_segment(aes(x = 0, y = Variable, xend = Count, yend = Variable), show.legend = FALSE, color = all_color) + theme_bw() + 
          theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 20), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(),
                strip.background=element_rect(colour="black",
                                              fill="grey95"))+ geom_point(size = 9, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 4), width = 13, height = 8, dpi = 300, units = "in", device='png')
-
-
 
 #Q11
 colnames(all_survey_participants)
@@ -637,7 +593,6 @@ all_survey_participants_long= all_survey_participants_expanded %>%
     "Black, Indigenous, or a Person of Color (BIPOC)"= sum(Q11_Simplified=="BIPOC")
     
   )
-
 
 all_survey_participants_long =  all_survey_participants_long %>% 
   pivot_longer(cols = -All, names_to = "Variable", values_to = "Count")
@@ -667,11 +622,9 @@ ggsave(filename = "Q11_Enlarged.png",ggplot(all_survey_participants_long , aes(C
                                              fill="grey95"))+ geom_point(size = 12.5, show.legend = FALSE, color = all_color) + 
          geom_text(color = "white", size = 5), width = 18, height = 8, dpi = 300, units = "in", device='png')
 
-
-
 #############################
 
-#Grouped data
+#Creating group data with all the necessary groups to join with rbind
 data[is.na(data)] = "Filler"
 Q2 = separate_rows(data, "Q2_Grouped", sep = ",")
 
@@ -733,6 +686,7 @@ combined_data$Group = factor(combined_data$Group, levels=c("Volunteers",
 
 colnames(combined_data) = c("ID", "Group","Education","Gender", "Race_Ethnicity","Group_Membership","Working_Hours")
 
+ #Summarizing grouped data
 Education = combined_data %>% 
   group_by(Group) %>%
   summarise("High School" = sum(Education=="High School"),
@@ -751,7 +705,8 @@ Gender= combined_data %>%
     "Non-Binary/Gender Queer/Gender Non-Conforming" = sum(Gender=="Non-Binary/Gender Queer/Gender Non-Conforming"),
     "Other"= sum(Gender=="Other"))
 
-
+#Participants could select multiple choices for this variable 
+# Each choice is seperated by a comma 
 group =  separate_rows(combined_data, "Group_Membership", sep = ",")  
 Group_Membership=group %>% 
   group_by(Group) %>%
@@ -768,8 +723,6 @@ Group_Membership=group %>%
     "Black, Indigenous, or a Person of Color (BIPOC)"= sum(Group_Membership=="Black, Indigenous, or a Person of Color (BIPOC)"),
     "From a disadvantaged background"= sum(Group_Membership=="From a disadvantaged background"))
 
-
-
 Working_Hours=combined_data %>% 
   group_by(Group) %>%
   summarise(
@@ -778,6 +731,9 @@ Working_Hours=combined_data %>%
     "21-30" = sum(Working_Hours=="21-30") ,
     "31-40" = sum(Working_Hours=="31-40")
   )
+  
+#Participants could select multiple choices for this variable 
+# Each choice is seperated by a comma 
 race =  separate_rows(combined_data, "Race_Ethnicity", sep = ",")
 Race_Ethnicity=race %>% 
   group_by(Group) %>%
@@ -904,11 +860,6 @@ Working_Hours$Variable = factor(Working_Hours$Variable, levels = c(
   "0-10"
   
 ))
-
-
-
-
-
 
 #Code to create a color vector the same length as the variable and plot the variable
 #Education is replaced with the Working_Hours, Gender, Race_Ethnicity, and Group_Membership dataframes 
