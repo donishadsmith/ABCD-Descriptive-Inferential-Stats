@@ -20,6 +20,7 @@ for(i in data$Q6_4){
 
 data$Q6_4_Grouped  =Q6_4_Grouped 
 
+#Data in column ranges from 1 to 40
 Q5_4_Grouped = c()
 for(i in data$Q5_4){
   if(i %in% c(0:10)){
