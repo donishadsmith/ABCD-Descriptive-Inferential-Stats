@@ -42,47 +42,6 @@ for(i in data$Q5_4){
 }
 data$Q5_4_Grouped =Q5_4_Grouped
 
-Q5_4_Grouped_All = c()
-for(i in data$Q5_4){
-  if(i %in% c(0:10)){
-    convert = '0-10'
-  }
-  else if(i %in% c(11:20)){
-    convert = '11-20'
-  }
-  else if(i %in% c(21:30)){
-    convert = '21-30'
-  }
-  else if(i %in% c(NA, NULL)){
-    convert = NA
-  }
-  else{
-    convert = '31-40'
-  }
-  Q5_4_Grouped_All= c(Q5_4_Grouped_All,convert)
-}
-data$Q5_4_Grouped_All =Q5_4_Grouped_All
-
-Q6_4_Grouped_All = c()
-for(i in data$Q6_4){
-  if(i %in% c(0:10)){
-    convert = '0-10'
-  }
-  else if(i %in% c(11:20)){
-    convert = '11-20'
-  }
-  else if(i %in% c(21:30)){
-    convert = '21-30'
-  }
-  else if(i %in% c(NA, NULL)){
-    convert = NA
-  }
-  else{
-    convert = '31-40'
-  }
-  Q6_4_Grouped_All= c(Q6_4_Grouped_All,convert)
-}
-data$Q6_4_Grouped_All =Q6_4_Grouped_All
 
 #Creating a grouping variable for all survey participants
 data$All = rep('All ABCD Survey Participants', nrow(data))
