@@ -1,93 +1,110 @@
 #Script to create the Dummy_Education_Plot_Example.png
 #These were the type of plots were generated from the ABCD Descriptive script
+#Import excel sheet
 pacman::p_load(dplyr, ggplot2, tidyr)
-data = readxl::read_xlsx("~/data.xlsx")
+data = readxl::read_xlsx("~/Documents/ABCD Demographics Survey.xlsx")
 data = data[2:nrow(data),]
 data = data.frame(ID = 1:nrow(data), data)
-data[is.na(data)] = "Filler"
 
-Q6_4_Grouped = c()
-for(i in data$Q6_4){
-  if(i %in% c(0, NA)){
-    convert = NA
+#Renaming variables in dataframe
+
+data = data %>% 
+  mutate(Q6_4_Grouped = case_when(
+    Q6_4 == '0' ~ 'Does not work w/ participants',
+    Q6_4 != '0' ~ 'Works w/ Participants' 
+  ))
+
+data = data %>% 
+  mutate(Q5_4_Grouped = case_when(
+    Q5_4 %in% c(0:10) ~ '0-10',
+    Q5_4 %in% c(11:20) ~ '11-20',
+    Q5_4 %in% c(21:30) ~ '21-30',
+    Q5_4 %in% c(31:40) ~ '31-40',
+  ))
+
+
+
+# For each question, count data is grouped into a longform dataframe for plotting
+data[is.na(data)] = "Filler"
+#############################
+#Plotting for specific groups
+#Creating group data with all the necessary groups to join with rbind
+data = data[,c("Q2_Grouped","Q4_Grouped","Q6_4_Grouped","Q30_Grouped", "Q8_Simplified", "Q9", "Q10", "Q11_Simplified", "Q5_4_Grouped")]
+Q2_seperated_data = separate_rows(data, "Q2_Grouped", sep = ",")
+Q2_seperated_data = Q2_seperated_data  %>% mutate(Group = Q2_Grouped )
+Q6_4_seperated_data = Q30_seperated_data = data
+Q6_4_seperated_data = Q6_4_seperated_data  %>% mutate(Group = Q6_4_Grouped)
+Q30_seperated_data = Q2_seperated_data  %>% mutate(Group = Q30_Grouped )
+Q4_seperated_data = separate_rows(data, "Q4_Grouped", sep = ",")
+Q4_seperated_data = Q4_seperated_data  %>% mutate(Group = Q4_Grouped )
+
+combined_data = rbind(Q2_seperated_data[which(Q2_seperated_data$Group =="PIs/CoIs"),],
+                      Q2_seperated_data[which(Q2_seperated_data$Group  =="RECOVER"),],
+                      Q2_seperated_data[which(Q2_seperated_data$Group  =="Trainees"),],
+                      Q2_seperated_data[which(Q2_seperated_data$Group  =="RAs"),],
+                      Q6_4_seperated_data[which(Q6_4_seperated_data$Group == "Works w/ Participants"),],
+                      Q30_seperated_data[which(Q30_seperated_data$Group == "Managers"),],
+                      Q4_seperated_data[which(Q4_seperated_data$Group =="Volunteers"),],
+                      Q4_seperated_data[which(Q4_seperated_data$Group=="Compensated"),]
+)
+
+combined_data = data.frame(combined_data[c("Group", "Q8_Simplified", "Q9", "Q10", "Q11_Simplified", "Q5_4_Grouped")]) 
+
+colnames(combined_data ) = c("Group","Education","Gender", "Race_Ethnicity","Group_Membership","Working_Hours")
+
+combined_data$Group = factor(combined_data$Group, levels=c("Volunteers",
+                                                           "Compensated",
+                                                           "Managers",
+                                                           "Works w/ Participants",
+                                                           "RECOVER",
+                                                           "RAs",
+                                                           "Trainees",
+                                                           "PIs/CoIs"))
+
+
+#Function to create dataframe for plotting 
+create_dataframe = function(data, column_name, elongate){
+  if (elongate == "Yes"){
+    data = data.frame(separate_rows(data, column_name, sep = ","))
   }
-  else{
-    convert = 'Group_W'
+  #Retrieve names of factors
+  group_factor_levels = levels(factor(data[,"Group"]))
+  variable_factor_levels =levels(factor(data[,column_name], exclude = c("Filler", NA)))
+  
+  #Create dataframe
+  survey_participants = data.frame(matrix(nrow = length(group_factor_levels) * length(variable_factor_levels), ncol = 3))
+  colnames(survey_participants) = c("Group", "Variable", "Percentage")
+  
+  counts = c()
+  group_vector = c()
+  variable_names = c()
+  #Counting number of factors in dataframe column
+  for(group_factor_level in group_factor_levels){
+    group_vector  = c(group_vector,rep(group_factor_level, length(variable_factor_levels)))
+    for(variable_factor_level in variable_factor_levels){
+      variable_names = c(variable_names, variable_factor_level)
+      counts = c(counts, nrow(data[which(data[,"Group"] == group_factor_level & data[,column_name] == variable_factor_level ),]))
+    }
   }
-  Q6_4_Grouped = c(Q6_4_Grouped ,convert)
+  
+  
+  
+  survey_participants$Group = group_vector
+  survey_participants$Variable = variable_names
+  survey_participants$Percentage= counts
+  
+  return(survey_participants)
 }
 
-data$Q6_4_Grouped  =Q6_4_Grouped 
 
 
-#############################
-
-#Grouped data
-#Survey was multiple choice and multiple choice answers were seperated by commas
-Q2 = separate_rows(data, "Q2_Grouped", sep = ",")
-summary(factor(Q2$Q2_Grouped, exclude = NA))
-
-
-Group_R = which(Q2$Q2_Grouped == "Group_R")
-Group_R = Q2[Group_R,]
-Group_R$Group = Group_R$Q2_Grouped
-
-
-Group_T = which(Q2$Q2_Grouped =="Group_T")
-Group_T = Q2[Group_T,]
-Group_T$Group = Group_T$Q2_Grouped
-
-  
-Group_W= which(data$Q6_4_Grouped == "Group_W")
-Group_W = data[c(Group_W),]
-Group_W$Group = Group_W$Q6_4_Grouped
-
-
-Q4 = separate_rows(data, "Q4_Grouped", sep = ",")
-
-summary(factor(Q4$Q4_Grouped))
-
-Group_C = which(Q4$Q4_Grouped =="Group_C")
-Group_C = Q4[Group_C,]
-Group_C$Group = Group_C$Q4_Grouped
-
-Group_V = which(Q4$Q4_Grouped =="Group_V")
-Group_V = Q4[Group_V,]
-Group_V$Group = Group_V$Q4_Grouped
-
-summary(factor(data$Q30_Grouped))
-
-Group_M = which(data$Q30_Grouped=="Group_M")
-Group_M = data[Group_M,]
-Group_M$Group = Group_M$Q30_Grouped
-
-combined_data = rbind(Group_R,Group_T,Group_V,Group_W,Group_C,
-                      Group_M)
-
-combined_data = data.frame(combined_data[c("ID","Group", "Q8_Simplified")])
-summary(factor(combined_data$Group))
-combined_data$Group = factor(combined_data$Group, levels=c("Group_V",
-                                                           "Group_C",
-                                                           "Group_M",
-                                                           "Group_W",
-                                                           "Group_R",
-                                                           "Group_T"
-                                                           ))
-
-
-summary(factor(combined_data$Group))
-colnames(combined_data) = c("ID", "Group","Education")
-
-combined_data$ID = 1:nrow(combined_data)
+Education = create_dataframe(data = combined_data, column_name = "Education", elongate = "No")
 
 #Generate random data
+groups = Education["Group"]; groups = as.character(groups$Group); groups = unique(groups)
 
-groups = combined_data["Group"]; groups = as.character(groups$Group); groups = unique(groups)
-groups = sample(groups, nrow(combined_data), replace = T)
 
-combined_data["Group"] = groups
-
-education_groups = combined_data["Education"]; education_groups = unique(education_groups$Education)
+education_groups = unique(Education$Variable)
 
 
 for(group in groups){
@@ -95,110 +112,40 @@ for(group in groups){
   #While loop to create probabilities for each education variable
   #Purpose is to replicate a sample that where the probabilities do not exceed 100 and are not less than 80
   #Creates a unique distribution for each of the groups for plotting
-  while(!(sum(prob) < 100 & sum(prob) > 80 )){
+  while(!(sum(prob) < 100 & sum(prob) > 60)){
     #Max is 100/length(education_groups) so that even in the incredibly rare chance that all variables qual the max
     #The max will not exceed 100
-    prob = runif(length(education_groups), min = 0, max = 100/length(education_groups))
+    prob = round(runif(length(education_groups), min = 0, max = 100/length(unique(education_groups))),0)
   }
   #Convert to percent
-  prob = prob/100
-  combined_data[combined_data$Group  == group,"Education"] = sample(education_groups, nrow(combined_data[combined_data$Group  == group,]), replace = T, prob = prob)
+  Education[Education$Group  == group,"Percentage"] = prob
   
 }
 
+Education[which(Education$Variable == "Other:______________"), "Variable"] = "Other"
+#Code to create a color vector the same length as the variable and plot the variable
+#Education is replaced with the Working_Hours, Gender, Race_Ethnicity, and Group_Membership dataframes 
+#to create different plots
 
-#Using tidyr to summarize information by group
-Education = combined_data %>% 
-  group_by(Group) %>%
-  summarise("High School" = sum(Education=="High School"),
-            "Some College" = sum(Education=="Some College"),
-            "Associate’s" = sum(Education=="Associate’s"),
-            "Bachelor’s" = sum(Education=="Bachelor’s"),
-            "Master’s" = sum(Education=="Master’s"),
-            "Ph.D./M.D." = sum(Education=="Ph.D./M.D."),
-            "Other"= sum(Education=="Other"))
+colors = c("#6639B5","#9B25AE", "#1F95F1", "#009586", "#4AAE4F", "#FEC006", "#FE5521", "#E81C62")
+new_colours = c()
 
-
-Education =  Education%>% 
-  pivot_longer(cols = -Group, names_to = "Variable", values_to = "Percentage")
-Education = data.frame(Education)
-
-
-#Convert counts to percentages
-combined_data[which(combined_data$Group == groups[1]),]
-n = summary(factor(combined_data[["Group"]], exclude = NA))
-
-
-summary(factor(Education[["Group"]], exclude = NA))
-
-Education[which(Education$Group=="Group_C"), "Percentage"] = round(
-  Education[which(Education$Group=="Group_C"), "Percentage"]/n[[1]]*100,
-  0
-)
-
-Education[which(Education$Group=="Group_M"), "Percentage"] = round(
-  Education[which(Education$Group=="Group_M"), "Percentage"]/n[[2]]*100,
-  0
-)
-
-Education[which(Education$Group=="Group_R"), "Percentage"] = round(
-  Education[which(Education$Group=="Group_R"), "Percentage"]/n[[3]]*100,
-  0
-)
-
-Education[which(Education$Group=="Group_T"), "Percentage"] = round(
-  Education[which(Education$Group=="Group_T"), "Percentage"]/n[[4]]*100,
-  0
-)
-
-Education[which(Education$Group=="Group_V"), "Percentage"] = round(
-  Education[which(Education$Group=="Group_V"), "Percentage"]/n[[5]]*100,
-  0
-)
-
-
-Education[which(Education$Group=="Group_W"), "Percentage"] = round(
-  Education[which(Education$Group=="Group_W"), "Percentage"]/n[[6]]*100,
-  0
-)
-
-
-
-
-
-
-Education$Variable = factor(Education$Variable, levels = c(
-  "Other",
-  "Ph.D./M.D.",
-  "Master’s",
-  "Bachelor’s",
-  "Associate’s",
-  "Some College",
-  "High School"
+#Function to create plots
+create_plot = function(file_name,dataframe){
+  for(x in colors){
+    #Color vector needs to match the rows in the Group column
+    new_colours = c(new_colours, rep(x, nrow(dataframe[dataframe$Group == "Volunteers",])))
+  }
   
-))
-
-
-
-new_colors = c()
-
-colors = c("#6639B5","#9B25AE", "#1F95F1", "#009586", "#4AAE4F", "#FEC006")
-#Length of color vector needs to equal length of rows
-#Each group needs its own unique color
-for(x in colors){
-  new_colors = c(new_colors, rep(x,7))
+  
+  ggsave(filename = file_name,ggplot(dataframe, aes(Percentage, Variable, label = paste0(Percentage, "%"))) + 
+           geom_segment(aes(x = 0, y = Variable, xend = Percentage, yend = Variable), show.legend = FALSE, color = new_colours) + theme_bw() + facet_wrap(~Group, ncol = 4) + 
+           theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 10), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(), axis.text.x = element_text(size=8), axis.text.y = element_text(size=8),
+                 strip.background=element_rect(colour="black",
+                                               fill="grey95"))+ geom_point(size = 5, show.legend = FALSE, color = new_colours) +
+           expand_limits(x=c(0,100)) + geom_text(color = "white", size = 2), width = 7, height = 3, dpi = 300, units = "in", device='png')
+  
 }
 
+create_plot("Education_Dummy_Plot.png", Education)
 
-
-ggsave(filename = "Dummy_Education_Plot_Example.png",ggplot(Education, aes(Percentage, Variable, label = paste0(Percentage, "%"))) + 
-         geom_segment(aes(x = 0, y = Variable, xend = Percentage, yend = Variable), show.legend = FALSE, color = new_colors) + theme_bw() + facet_wrap(~Group, ncol = 3) + 
-         theme(plot.title = element_text(hjust = 0.5),text = element_text(size = 10), panel.grid.major = element_blank(),  axis.title.y=element_blank(), axis.title.x=element_blank(), axis.text.x = element_text(size=8), axis.text.y = element_text(size=8),
-               strip.background=element_rect(colour="black",
-                                             fill="grey95"))+ geom_point(size = 4, show.legend = FALSE, color = new_colors) +
-         expand_limits(x=c(0,100)) + geom_text(color = "white", size = 1.5), width = 7, height = 3, dpi = 300, units = "in", device='png')
-
-for(group in unique(groups)){
- x = sum(Education[Education$Group  == group,"Percentage"])
-  print(x)
-}
