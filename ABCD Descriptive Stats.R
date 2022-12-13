@@ -437,6 +437,6 @@ create_plot = function(file_name,dataframe){
 create_plot("Education.png", Education)
 create_plot("Working_Hours.png", Working_Hours)
 create_plot("Gender.png", Gender)
-create_plot(" Group_Membership.png", Group_Membership)
-create_plot("Race_Ethnicity.png", Race_Ethnicity)
+create_plot("Group_Membership.png", Group_Membership)
+create_plot("Race_Ethnicity.png", Race)
 
