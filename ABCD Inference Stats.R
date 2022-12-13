@@ -4,61 +4,30 @@ data = readxl::read_xlsx("~/ABCD.xlsx")
 data = data[2:nrow(data),]
 data = data.frame(ID = 1:nrow(data), data)
 
-# Creating for loop to categorize continuous data into 4 categories
-Time_Grouped = c()
-for(i in data$Time){
-  if(i %in% c(0:10)){
-    convert = '0-10'
-  }
-  else if(i %in% c(11:20)){
-    convert = '11-20'
-  }
-  else if(i %in% c(21:30)){
-    convert = '21-30'
-  }
-  else if(i %in% c(NA, NULL)){
-    convert = NA
-  }
-  else{
-    convert = '31-40'
-  }
-  Time_Grouped = c(Time_Grouped ,convert)
-}
-data$Time_Grouped  = Time_Grouped 
 
-# Creating for loop to recode 2015:2017 to 0 and 2021:2022 to 1 for later logistic regression
-Turnover_Grouped = c()
-for(time in data$Turnover){
-  if(as.numeric(time) %in% c(2015:2017)){
-    convert = 0
-  }
-  else if(as.numeric(time) %in% c(2021:2022)){
-    convert = 1
-  }
-  else{
-    convert = NA
-  }
-  Turnover_Grouped = c(Turnover_Grouped, convert)
-}
+#Renaming variables in dataframe
 
-data$Turnover_Grouped = Turnover_Grouped 
+data = data %>% 
+  mutate(Race = case_when(
+    Race == 'White' ~ 'Non-Hispanic White',
+    Turnover!= 'White' ~ 'POC' 
+  ))
 
-# Creating for loop to categorize race into 2 categories
-Race_Grouped = c()
-for(i in data$Race){
-  if(isTRUE(i=="White")==T){
-    convert = i
-  }
-  else if(!(i %in% c("White"))){
-    convert = "POC"
-  }
-  else{
-    convert = NA
-  }
-  Race_Grouped  = c(Race_Grouped , convert)
-}
+data = data %>% 
+  mutate(Time = case_when(
+    Time %in% c(0:10) ~ '0-10',
+    Time %in% c(11:20) ~ '11-20',
+    Time %in% c(21:30) ~ '21-30',
+    Time %in% c(31:40) ~ '31-40',
+  ))
 
-data$Race_Grouped  = factor(Race_Grouped, levels = c("White", "POC"))
+data = data %>% 
+  mutate(Time = case_when(
+    Time %in% c(2015:2017) ~ 0,
+    Time %in% c(2021:2022) ~ 1
+  ))
+
+
 
 #Creating a new column in dataframe named Finance_Groups
 data$Finance_Groups = rep(NA, nrow(data))
