@@ -10,15 +10,15 @@ data = data.frame(ID = 1:nrow(data), data)
 data = data %>% 
   mutate(Race = case_when(
     Race == 'White' ~ 'Non-Hispanic White',
-    Turnover!= 'White' ~ 'POC' 
+    Race != 'White' ~ 'POC' 
   ))
 
 data = data %>% 
-  mutate(Time = case_when(
-    Time %in% c(0:10) ~ '0-10',
-    Time %in% c(11:20) ~ '11-20',
-    Time %in% c(21:30) ~ '21-30',
-    Time %in% c(31:40) ~ '31-40',
+  mutate(Turnover = case_when(
+    Turnover %in% c(0:10) ~ '0-10',
+    Turnover %in% c(11:20) ~ '11-20',
+    Turnover %in% c(21:30) ~ '21-30',
+    Turnover %in% c(31:40) ~ '31-40',
   ))
 
 data = data %>% 
