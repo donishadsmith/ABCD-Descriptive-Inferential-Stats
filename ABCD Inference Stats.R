@@ -34,21 +34,6 @@ data$Finance_Groups = rep(NA, nrow(data))
 #Categorizing individuals based on the certain criteria
 # For instance, those that are PI/CoIs and are compensated will b classified as Compensated PIs/CoIs in the Finance_Groups column
 #Used for chisquare tests
-data[c(which(data$Roles == "PIs/CoIs" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated PIs/CoIs"
-data[c(which(data$Roles == "PIs/CoIs" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer PIs/CoIs"
-
-data[c(which(data$Roles == "RAs" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated RAs"
-data[c(which(data$Roles == "RAs" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer RAs"
-
-data[c(which(data$Roles == "RECOVER" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated RECOVER"
-data[c(which(data$Roles == "RECOVER" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer RECOVER"
-
-data[c(which(data$Roles == "Trainees" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated Trainees"
-data[c(which(data$Roles == "Trainees" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer Trainees"
-data[c(which(data$Roles == "Trainees" & data$Finance == "I’m not sure")),"Finance_Groups"] = "Unsure Trainees"
-
-#Another method, don't pre-create new 'Finance_Group' column and simply use mutate to simultaneously create column and new code
-
 data = data %>% 
   mutate(Finance_Group = case_when(
     Roles == "PIs/CoIs" & Finance == "Compensated"  ~ 'Compensated PIs/CoIs',
@@ -98,43 +83,22 @@ chisq.test(Race_Finance, simulate.p.value = T)
 
 #Post hoc w/Bonferonni correction
 bonferroni = 0.05/28
+x = 1
+#While loop for contrasts
+while(x  < 8){
+  num = (x + 1):8
+  for(y in num){
+    test = chisq.test(Race_Finance[c(x,y)],simulate.p.value = T)
+    #Only print columns that meet threshold
+    if(test$p.value < bonferroni){
+      print(sprintf('Columns %s & %s', names(Race_Finance[x]),names(Race_Finance[y])))
+      print(test)
+      
+    }
+  }
+  x = x + 1
+}
 
-chisq.test(Race_Finance,simulate.p.value = T)
-
-chisq.test(Race_Finance[c(1,2)],simulate.p.value = T)
-chisq.test(Race_Finance[c(1,3)],simulate.p.value = T)
-chisq.test(Race_Finance[c(1,4)],simulate.p.value = T)
-chisq.test(Race_Finance[c(1,5)],simulate.p.value = T)
-chisq.test(Race_Finance[c(1,6)],simulate.p.value = T)
-chisq.test(Race_Finance[c(1,7)],simulate.p.value = T)
-chisq.test(Race_Finance[c(1,8)],simulate.p.value = T)
-
-chisq.test(Race_Finance[c(2,3)],simulate.p.value = T)
-chisq.test(Race_Finance[c(2,4)],simulate.p.value = T)
-chisq.test(Race_Finance[c(2,5)],simulate.p.value = T)
-chisq.test(Race_Finance[c(2,6)],simulate.p.value = T)
-chisq.test(Race_Finance[c(2,7)],simulate.p.value = T)
-chisq.test(Race_Finance[c(2,8)],simulate.p.value = T)
-
-chisq.test(Race_Finance[c(3,4)],simulate.p.value = T)
-chisq.test(Race_Finance[c(3,5)],simulate.p.value = T)
-chisq.test(Race_Finance[c(3,6)],simulate.p.value = T)
-chisq.test(Race_Finance[c(3,7)],simulate.p.value = T)
-chisq.test(Race_Finance[c(3,8)],simulate.p.value = T)
-
-chisq.test(Race_Finance[c(4,5)],simulate.p.value = T)
-chisq.test(Race_Finance[c(4,6)],simulate.p.value = T)
-chisq.test(Race_Finance[c(4,7)],simulate.p.value = T)
-chisq.test(Race_Finance[c(4,8)],simulate.p.value = T)
-
-chisq.test(Race_Finance[c(5,6)],simulate.p.value = T)
-chisq.test(Race_Finance[c(5,7)],simulate.p.value = T)
-chisq.test(Race_Finance[c(5,8)],simulate.p.value = T)
-
-chisq.test(Race_Finance[c(6,7)],simulate.p.value = T)
-chisq.test(Race_Finance[c(6,8)],simulate.p.value = T)
-
-chisq.test(Race_Finance[c(7,8)],simulate.p.value = T)
 
 #Reordering factors for regression
 data$Race = factor(data$Race, levels = c("White", "Hispanic or Latino/a/x", "Asian or Pacific Islander","Black or African American",
