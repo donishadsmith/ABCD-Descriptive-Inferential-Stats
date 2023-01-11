@@ -37,7 +37,6 @@ data$Finance_Groups = rep(NA, nrow(data))
 data[c(which(data$Roles == "PIs/CoIs" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated PIs/CoIs"
 data[c(which(data$Roles == "PIs/CoIs" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer PIs/CoIs"
 
-
 data[c(which(data$Roles == "RAs" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated RAs"
 data[c(which(data$Roles == "RAs" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer RAs"
 
@@ -48,9 +47,22 @@ data[c(which(data$Roles == "Trainees" & data$Finance == "Compensated")),"Finance
 data[c(which(data$Roles == "Trainees" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer Trainees"
 data[c(which(data$Roles == "Trainees" & data$Finance == "I’m not sure")),"Finance_Groups"] = "Unsure Trainees"
 
-data[c(which(data$Roles == "PIs/CoIs" & data$Finance == "Compensated")),"Finance_Groups"] = "Compensated PIs/CoIs"
-data[c(which(data$Roles == "PIs/CoIs" & data$Finance == "Volunteers")),"Finance_Groups"] = "Volunteer PIs/CoIs"
+#Another method, don't pre-create new 'Finance_Group' column and simply use mutate to simultaneously create column and new code
 
+data = data %>% 
+  mutate(Finance_Group = case_when(
+    Roles == "PIs/CoIs" & Finance == "Compensated"  ~ 'Compensated PIs/CoIs',
+    Roles == "PIs/CoIs" & Finance == "Volunteers"  ~ 'Volunteer PIs/CoIs',
+    Roles == "RAs" & Finance == "Compensated"  ~ 'Compensated RAs',
+    Roles == "RAs" & Finance == "Volunteers"  ~ 'Volunteer RAs',
+    Roles == "RECOVER" & Finance == "Compensated"  ~ 'Compensated RECOVER',
+    Roles == "RECOVER" & Finance == "Volunteers"  ~ 'Volunteer RECOVER',
+    Roles == "Trainees" & Finance == "Compensated"  ~ 'Compensated Trainees',
+    Roles == "Trainees" & Finance == "Volunteers"  ~ 'Volunteer Trainees',
+    Roles == "Trainees" & Finance == "I’m not sure"  ~ 'Unsure Trainees'
+    
+    
+  ))
 #Categorizing individuals based on the certain criteria
 #PIs/CoIs that are not managers are classified as 0 in the newly created Manager_Groups column. This is used for logistic regression
 data$Manager_Groups = rep(NA, nrow(data))
