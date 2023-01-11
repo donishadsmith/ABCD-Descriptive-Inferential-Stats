@@ -27,10 +27,6 @@ data = data %>%
     Time %in% c(2021:2022) ~ 1
   ))
 
-
-
-#Creating a new column in dataframe named Finance_Groups
-data$Finance_Groups = rep(NA, nrow(data))
 #Categorizing individuals based on the certain criteria
 # For instance, those that are PI/CoIs and are compensated will b classified as Compensated PIs/CoIs in the Finance_Groups column
 #Used for chisquare tests
@@ -44,16 +40,15 @@ data = data %>%
     Roles == "RECOVER" & Finance == "Volunteers"  ~ 'Volunteer RECOVER',
     Roles == "Trainees" & Finance == "Compensated"  ~ 'Compensated Trainees',
     Roles == "Trainees" & Finance == "Volunteers"  ~ 'Volunteer Trainees',
-    Roles == "Trainees" & Finance == "I’m not sure"  ~ 'Unsure Trainees'
-    
-    
+    Roles == "Trainees" & Finance == "I’m not sure"  ~ 'Unsure Trainees'  
   ))
 #Categorizing individuals based on the certain criteria
 #PIs/CoIs that are not managers are classified as 0 in the newly created Manager_Groups column. This is used for logistic regression
-data$Manager_Groups = rep(NA, nrow(data))
-data[c(which(data$Roles == "PIs/CoIs" & data$Manage == "Non-manager")),"Manager_Groups"] = 0
-data[c(which(data$Roles == "PIs/CoIs" & data$Manage == "Managers")),"Manager_Groups"] = 1
-
+data = data %>% 
+  mutate(Finance_Group = case_when(
+    Roles == "PIs/CoIs" & Manage == "Non-managers"  ~ 0,
+    Roles == "PIs/CoIs" & Manage == "Managers"  ~ 1
+  ))
 
 
 #Creating new dataframe in preparation for chisquare test
