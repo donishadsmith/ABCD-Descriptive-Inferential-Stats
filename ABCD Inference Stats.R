@@ -1,5 +1,5 @@
 #Importing excel file into R
-pacman::p_load(dplyr, ggplot2, tidyr, jtools)
+pacman::p_load(dplyr, tidyr)
 data = readxl::read_xlsx("~/ABCD.xlsx")
 data = data[2:nrow(data),]
 data = data.frame(ID = 1:nrow(data), data)
@@ -77,12 +77,8 @@ Race_Finance= Race_Finance%>%
 Race_Finance = Race_Finance[-c(5),]
 # Taking the names from the first column and reassigning them as rownames
 names = Race_Finance$Finance_Groups
-Race_Finance = Race_Finance[2:ncol(Race_Finance)]
-Race_Finance = data.frame(Race_Finance )
+Race_Finance = Race_Finance[2:ncol(Race_Finance)] %>% data.frame() %>% t()
 rownames(Race_Finance)=names
-#Transpose dataframe
-Race_Finance = t(Race_Finance)
-
 
 
 #chisquare test
