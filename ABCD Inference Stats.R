@@ -28,7 +28,7 @@ data = data %>%
   ))
 
 #Categorizing individuals based on the certain criteria
-# For instance, those that are PI/CoIs and are compensated will b classified as Compensated PIs/CoIs in the Finance_Groups column
+# For instance, those that are PI/CoIs and are compensated will be classified as Compensated PIs/CoIs in the Finance_Groups column
 #Used for chisquare tests
 data = data %>% 
   mutate(Finance_Group = case_when(
